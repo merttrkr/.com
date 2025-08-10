@@ -1,16 +1,16 @@
 import { Logo } from "@once-ui-system/core";
 
 const person = {
-  firstName: "Selene",
-  lastName: "Yu",
+  firstName: "Mert",
+  lastName: "Turker",
   get name() {
     return `${this.firstName} ${this.lastName}`;
   },
-  role: "Design Engineer",
+  role: "Software Engineer",
   avatar: "/images/avatar.jpg",
-  email: "example@gmail.com",
-  location: "Asia/Jakarta", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
-  languages: ["English", "Bahasa"], // optional: Leave the array empty if you don't want to display languages
+  email: "mertturker99@gmail.com", // Add your email if you want to display it
+  location: "Europe/Istanbul", // IANA time zone for Türkiye
+  languages: ["Turkish (Native)", "English (C2)", "German (A2)", "Spanish (A1)"]
 };
 
 const newsletter = {
@@ -25,19 +25,17 @@ const newsletter = {
 };
 
 const social = [
-  // Links are automatically displayed.
-  // Import new icons in /once-ui/icons.ts
   {
     name: "GitHub",
     icon: "github",
-    link: "https://github.com/once-ui-system/nextjs-starter",
+    link: "https://github.com/merttrkr",
   },
   {
     name: "LinkedIn",
     icon: "linkedin",
-    link: "https://www.linkedin.com/company/once-ui/",
+    link: "https://www.linkedin.com/in/mertturker/",
   },
-  {
+    {
     name: "Threads",
     icon: "threads",
     link: "https://www.threads.com/@once_ui",
@@ -63,8 +61,8 @@ const home = {
   },
   subline: (
     <>
-      I'm Selene, a design engineer at <Logo icon="/trademarks/wordmark-dark.svg" style={{ display: "inline-flex", top: "0.25em", marginLeft: "-0.25em" }}/>, where I craft intuitive
-      <br /> user experiences. After hours, I build my own projects.
+      I'm Mert, a software engineer passionate about building scalable systems and modern web applications.
+      <br /> Always learning, always building.
     </>
   ),
 };
@@ -73,7 +71,7 @@ const about = {
   path: "/about",
   label: "About",
   title: `About – ${person.name}`,
-  description: `Meet ${person.name}, ${person.role} from ${person.location}`,
+  description: `Meet ${person.name}, ${person.role} from Izmir & Antalya, Türkiye`,
   tableOfContent: {
     display: true,
     subItems: false,
@@ -82,115 +80,132 @@ const about = {
     display: true,
   },
   calendar: {
-    display: true,
-    link: "https://cal.com",
+    display: false,
+    link: "",
   },
   intro: {
     display: true,
     title: "Introduction",
     description: (
       <>
-        Selene is a Jakarta-based design engineer with a passion for transforming complex challenges
-        into simple, elegant design solutions. Her work spans digital interfaces, interactive
-        experiences, and the convergence of design and technology.
+        Disciplined, innovative, and solution-oriented person. Seeking to learn new software development technologies while improving the ones I know.
       </>
     ),
   },
   work: {
-    display: true, // set to false to hide this section
+    display: true,
     title: "Work Experience",
     experiences: [
       {
-        company: "FLY",
-        timeframe: "2022 - Present",
-        role: "Senior Design Engineer",
+        company: "SAN TSG",
+        timeframe: "Nov 2024 – Present, Antalya, Türkiye",
+        role: "Software Engineer",
         achievements: [
-          <>
-            Redesigned the UI/UX for the FLY platform, resulting in a 20% increase in user
-            engagement and 30% faster load times.
-          </>,
-          <>
-            Spearheaded the integration of AI tools into design workflows, enabling designers to
-            iterate 50% faster.
-          </>,
+          <>Transformed a monolithic travel software system into microservices.</>,
+          <>Designed and developed a Notification Microservice.</>,
+          <>Contributed to 15+ microservices, using CQRS, DDD, Generic Repository Pattern.</>,
+          <>Implemented Dapr sidecar, Redis caching, PostgreSQL, MongoDB, Elasticsearch.</>,
+          <>Deployed to AWS, integrated Prometheus, Grafana, and resolved performance issues.</>,
         ],
-        images: [
-          // optional: leave the array empty if you don't want to display images
-          {
-            src: "/images/projects/project-01/cover-01.jpg",
-            alt: "Once UI Project",
-            width: 16,
-            height: 9,
-          },
-        ],
+        images: [],
       },
       {
-        company: "Creativ3",
-        timeframe: "2018 - 2022",
-        role: "Lead Designer",
+        company: "Intertech",
+        timeframe: "Sep 2022 – Jun 2024, Izmir, Türkiye",
+        role: "Software Engineer",
         achievements: [
-          <>
-            Developed a design system that unified the brand across multiple platforms, improving
-            design consistency by 40%.
-          </>,
-          <>
-            Led a cross-functional team to launch a new product line, contributing to a 15% increase
-            in overall company revenue.
-          </>,
+          <>Integrated API Gateway, Clean Architecture, and client gateway.</>,
+          <>Used EF Core, Unit of Work, Repository, Jaeger, ELK, Jira, Jenkins, MSSQL.</>,
+          <>Implemented Domain Event pattern with RabbitMQ, Kubernetes, SAGA, Circuit Breaker.</>,
+          <>Developed tests with Moq, FluentAssertions, and Fluent Validation.</>,
+        ],
+        images: [],
+      },
+      {
+        company: "Izmir Institute of Technology",
+        timeframe: "Sep 2022 – Aug 2023, Izmir, Türkiye",
+        role: "Software Engineer",
+        achievements: [
+          <>Developed Erasmus Without Paper project with CQRS, DDD, MassTransit, RabbitMQ.</>,
+          <>Implemented caching (InMemory, Redis), logging (Serilog), dynamic queries, Automapper.</>,
+          <>Used SAGA, retry, circuit breaker, extension writing, domain modeling, clean code.</>,
+        ],
+        images: [],
+      },
+      {
+        company: "Delta Smart Tech",
+        timeframe: "May 2022 – Sep 2022, Izmir, Türkiye",
+        role: "Software Engineer",
+        achievements: [
+          <>Developed Spring Boot endpoints, improved code quality with unit tests (Mockito).</>,
+          <>Managed AWS cloud resources.</>,
         ],
         images: [],
       },
     ],
   },
   studies: {
-    display: true, // set to false to hide this section
-    title: "Studies",
+    display: true,
+    title: "Education",
     institutions: [
       {
-        name: "University of Jakarta",
-        description: <>Studied software engineering.</>,
-      },
-      {
-        name: "Build the Future",
-        description: <>Studied online marketing and personal branding.</>,
+        name: "Izmir Institute of Technology",
+        description: <>
+          BSc in Computer Engineering (Sep 2020 – Aug 2023)
+          <br />
+          <a href="https://ceng.iyte.edu.tr/tr/" target="_blank" rel="noopener noreferrer">Department Website</a>
+        </>,
       },
     ],
   },
   technical: {
-    display: true, // set to false to hide this section
+    display: true,
     title: "Technical skills",
     skills: [
       {
-        title: "Figma",
-        description: <>Able to prototype in Figma with Once UI with unnatural speed.</>,
-        // optional: leave the array empty if you don't want to display images
-        images: [
-          {
-            src: "/images/projects/project-01/cover-02.jpg",
-            alt: "Project image",
-            width: 16,
-            height: 9,
-          },
-          {
-            src: "/images/projects/project-01/cover-03.jpg",
-            alt: "Project image",
-            width: 16,
-            height: 9,
-          },
-        ],
+        title: "C# / .NET (Framework, Standard, Core)",
+        description: <>Professional experience in backend and microservices development.</>,
+        images: [],
       },
       {
-        title: "Next.js",
-        description: <>Building next gen apps with Next.js + Once UI + Supabase.</>,
-        // optional: leave the array empty if you don't want to display images
-        images: [
-          {
-            src: "/images/projects/project-01/cover-04.jpg",
-            alt: "Project image",
-            width: 16,
-            height: 9,
-          },
-        ],
+        title: "Java / Spring Boot",
+        description: <>Developed REST APIs and microservices, including unit testing.</>,
+        images: [],
+      },
+      {
+        title: "TypeScript / React / Next.js",
+        description: <>Frontend and full-stack web development.</>,
+        images: [],
+      },
+      {
+        title: "Python / Django",
+        description: <>Experience in scripting and web backend development.</>,
+        images: [],
+      },
+      {
+        title: "Docker / Kubernetes / Ingress",
+        description: <>Containerization and orchestration for scalable deployments.</>,
+        images: [],
+      },
+      {
+        title: "PostgreSQL / MSSQL / NoSQL",
+        description: <>Database design and optimization.</>,
+        images: [],
+      },
+      {
+        title: "RabbitMQ / SAGA / DDD / Jaeger / ELK",
+        description: <>Distributed systems, messaging, and observability.</>,
+        images: [],
+      },
+      {
+        title: "Unit Testing / Moq / FluentAssertions / Fluent Validation / Mockito",
+        description: <>Test-driven development and code quality assurance.</>,
+        images: [],
+      },
+      {
+        title: "Git / TFS / AWS",
+        description: <>Version control and cloud deployment.</>,
+        images: [],
       },
     ],
   },

@@ -1,0 +1,161 @@
+---
+title: "Implementing Distributed Locks with Redis Redlock Algorithm for Dotnet"
+publishedAt: "2024-10-13"
+summary: "A practical guide to distributed locking in .NET microservices using Redis and the Redlock algorithm, with code samples and architectural insights."
+image: "/images/gallery/horizontal-1.jpg"
+tag: "Distributed Systems"
+---
+
+## Introduction
+
+In a distributed microservices setup, dealing with concurrent access to shared resources can cause issues like race conditions, data corruption, or inconsistencies. To avoid these problems, we need a locking mechanism that ensures only one process can change a resource at a time. One of the most robust solutions is distributed locking.
+
+In this article, I’ll walk you through how to set up a distributed lock using the Redlock algorithm across multiple Redis instances in .NET. We’ll cover exponential backoff for retries, managing Redis connections, and ensuring thread safety.
+
+<Media src="/images/blogs/redlock.png" alt="Redlock Algorithm Diagram" aspectRatio="16/9" radius="l" />
+
+## Understanding the Redlock Algorithm
+
+The **Redlock algorithm**, created by Salvatore Sanfilippo (the creator of Redis), is a distributed locking mechanism that works across multiple Redis nodes. To acquire a lock, the client must successfully lock a majority of Redis instances within a timeout. This ensures reliability even if some Redis nodes go down.
+
+In our setup, we use **5 Redis instances** for fault tolerance. The lock is considered acquired if at least 3 out of 5 instances are locked.
+
+<Media src="/images/blogs/redlock_github.png" alt="Redlock Quorum" aspectRatio="16/4" radius="l" />
+
+## Exponential Backoff for Retrying Lock Acquisition
+
+When multiple clients try to grab a lock on the same resource, contention can happen. Using a retry strategy with exponential backoff helps reduce contention.
+
+<CodeBlock codes={[{
+  code: `public class ExponentialBackoff
+{
+    private readonly int _maxRetryCount;
+    private readonly double _backoffFactor;
+    private readonly TimeSpan _maxBackoffDelay;
+    private readonly TimeSpan _initialDelay;
+
+    public ExponentialBackoff(int maxRetryCount, double backoffFactor, TimeSpan maxBackoffDelay, TimeSpan initialDelay)
+    {
+        _maxRetryCount = maxRetryCount;
+        _backoffFactor = backoffFactor;
+        _maxBackoffDelay = maxBackoffDelay;
+        _initialDelay = initialDelay;
+    }
+
+    public async Task<bool> RetryAsync(Func<Task<bool>> operation)
+    {
+        TimeSpan currentDelay = _initialDelay;
+        Random random = new Random();
+
+        for (int attempt = 0; attempt < _maxRetryCount; attempt++)
+        {
+            if (await operation())
+                return true;
+
+            var jitter = random.Next(0, 100);
+            currentDelay = TimeSpan.FromMilliseconds(Math.Min(currentDelay.TotalMilliseconds * _backoffFactor + jitter, _maxBackoffDelay.TotalMilliseconds));
+            await Task.Delay(currentDelay);
+        }
+        return false;
+    }
+}`,
+  language: "csharp",
+  label: "ExponentialBackoff.cs"
+}]} />
+
+This mechanism ensures lock attempts aren’t constantly retried in high-contention situations, reducing load and boosting the chances of success.
+
+## Implementing RedisDistributedLock
+
+Here’s a simplified version of the `RedisDistributedLock` class using RedLock.NET:
+
+<CodeBlock codes={[{
+  code: `public class RedisDistributedLock : IDisposable, IDistributedLock
+{
+    private readonly RedLockFactory _redLockFactory;
+    private IRedLock _redLock;
+    private string _resource;
+    private readonly TimeSpan _lockExpiry;
+
+    public RedisDistributedLock(RedLockFactory redLockFactory, TimeSpan lockExpiry)
+    {
+        _redLockFactory = redLockFactory ?? throw new ArgumentNullException(nameof(redLockFactory));
+        _lockExpiry = lockExpiry;
+    }
+
+    public void SetResource(string resource)
+    {
+        _resource = resource ?? throw new ArgumentNullException(nameof(resource));
+    }
+
+    public async Task<bool> AcquireLockAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_resource))
+            throw new InvalidOperationException("Resource key must be set before acquiring a lock.");
+
+        _redLock = await _redLockFactory.CreateLockAsync(_resource, _lockExpiry);
+        return _redLock.IsAcquired;
+    }
+
+    public void Dispose()
+    {
+        _redLock?.Dispose();
+    }
+}`,
+  language: "csharp",
+  label: "RedisDistributedLock.cs"
+}]} />
+
+## Managing Redis Connections
+
+Efficiently managing connections to multiple Redis instances is crucial. Here’s a snippet for a connection factory:
+
+<CodeBlock codes={[{
+  code: `public class RedisConnectionFactory : IRedisConnectionFactory
+{
+    private readonly List<RedLockMultiplexer> _connectionMultiplexers;
+    private readonly List<string> _redisEndpoints = new() { "redis1:6379", "redis2:6379", "redis3:6379", "redis4:6379", "redis5:6379" };
+
+    public RedisConnectionFactory()
+    {
+        _connectionMultiplexers = CreateRedisConnections();
+    }
+
+    private List<RedLockMultiplexer> CreateRedisConnections()
+    {
+        var connections = new List<RedLockMultiplexer>();
+        foreach (var endpoint in _redisEndpoints)
+        {
+            var configurationOptions = new ConfigurationOptions
+            {
+                EndPoints = { endpoint },
+                AbortOnConnectFail = false,
+                Password = "your_password",
+                ConnectRetry = 5,
+                AllowAdmin = true,
+                SyncTimeout = 5000
+            };
+            var connection = ConnectionMultiplexer.Connect(configurationOptions);
+            connections.Add(connection);
+        }
+        return connections;
+    }
+
+    public List<RedLockMultiplexer> GetConnectionMultiplexers() => _connectionMultiplexers;
+}`,
+  language: "csharp",
+  label: "RedisConnectionFactory.cs"
+}]} />
+
+## Conclusion
+
+By using the Redlock algorithm with multiple Redis instances, exponential backoff, and robust connection management, you can achieve high availability and fault tolerance for distributed locks in .NET microservices.
+
+For more, see the [RedLock.NET GitHub repository](https://github.com/samcook/RedLock.net) and the [source code](https://github.com/merttrkr/distributed-lock-redis-redlock/tree/main).
+
+---
+
+Thank you for reading!  
+Checkout my [GitHub repositories](https://github.com/merttrkr).
+
+*Published on October 13, 2024 by Mert Türker*
